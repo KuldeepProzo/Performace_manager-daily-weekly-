@@ -2,3 +2,6 @@ requests
 python-dotenv
 urllib3
 email-validator
+Flask
+gunicorn
+beautifulsoup4
