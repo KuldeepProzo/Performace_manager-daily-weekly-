@@ -106,14 +106,14 @@ def get_all_deals_grouped_by_owner():
 
         print(f"\n📦 Deal {i}")
         print(f"🆔 ID: {deal_data['id']}")
-        '''
-        print(f"📛 Name: {deal_data['name']}")
-        print(f"👤 Owner Email: {deal_data['owner_email']}")
-        print(f"🔖 Deal Type: {deal_data['deal_type']}")
-        print(f"💰 Amount: ₹{deal_data['amount']}")
-        print(f"👥 Total Contacts: {len(contacts)} (API) / {deal_data['num_associated_contacts']} (Property)")
-        for contact in contacts:
-            print(f"   - {contact['firstname']} {contact['lastname']} | {contact['email']} | {contact['jobtitle']}")   '''
+        
+       # print(f"📛 Name: {deal_data['name']}")
+        #print(f"👤 Owner Email: {deal_data['owner_email']}")
+        #print(f"🔖 Deal Type: {deal_data['deal_type']}")
+        #print(f"💰 Amount: ₹{deal_data['amount']}")
+        #print(f"👥 Total Contacts: {len(contacts)} (API) / {deal_data['num_associated_contacts']} (Property)")
+        #for contact in contacts:
+         #   print(f"   - {contact['firstname']} {contact['lastname']} | {contact['email']} | {contact['jobtitle']}")   '''
 
         grouped.setdefault(owner_email, []).append(deal_data)
 
