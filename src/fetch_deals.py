@@ -172,6 +172,7 @@ def get_recent_deals_grouped_by_owner():
 
         print("\n📦 Deal Details")
         print(f"🆔 ID: {deal_data['id']}")
+        '''
         print(f"📛 Name: {deal_data['name']}")
         print(f"👤 Owner Email: {deal_data['owner_email']}")
         print(f"👤 Owner ID: {deal_data['owner_id']}")
@@ -184,7 +185,7 @@ def get_recent_deals_grouped_by_owner():
         print("🕓 Deal Type History:")
         if deal_data["deal_type_history"]:
             for entry in deal_data["deal_type_history"]:
-                print(f"   - {entry['timestamp']}: {entry['value']}")
+                print(f"   - {entry['timestamp']}: {entry['value']}")     '''
         else:
             print("   - No history found")
 
