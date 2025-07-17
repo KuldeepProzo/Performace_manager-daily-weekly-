@@ -172,22 +172,22 @@ def get_recent_deals_grouped_by_owner():
 
         print("\n📦 Deal Details")
         print(f"🆔 ID: {deal_data['id']}")
-        '''
-        print(f"📛 Name: {deal_data['name']}")
-        print(f"👤 Owner Email: {deal_data['owner_email']}")
-        print(f"👤 Owner ID: {deal_data['owner_id']}")
-        print(f"🕑 Last Modified: {deal_data['last_modified']}")
-        print(f"📅 Last Activity: {deal_data['last_activity']}")
-        print(f"🔖 Deal Type: {deal_data['deal_type']}")
-        print(f"📥 Owner Assigned Date: {deal_data['owner_assignment_date']}")
-        print(f"👌 Deal Source: {deal_data['deal_source']}")
-        print(f"📶 Deal Stage: {deal_data['deal_stage']}")
-        print("🕓 Deal Type History:")
-        if deal_data["deal_type_history"]:
-            for entry in deal_data["deal_type_history"]:
-                print(f"   - {entry['timestamp']}: {entry['value']}")     '''
-        else:
-            print("   - No history found")
+        
+        #print(f"📛 Name: {deal_data['name']}")
+        #print(f"👤 Owner Email: {deal_data['owner_email']}")
+        #print(f"👤 Owner ID: {deal_data['owner_id']}")
+        #print(f"🕑 Last Modified: {deal_data['last_modified']}")
+        #print(f"📅 Last Activity: {deal_data['last_activity']}")
+        #print(f"🔖 Deal Type: {deal_data['deal_type']}")
+        #print(f"📥 Owner Assigned Date: {deal_data['owner_assignment_date']}")
+        #print(f"👌 Deal Source: {deal_data['deal_source']}")
+        #print(f"📶 Deal Stage: {deal_data['deal_stage']}")
+        #print("🕓 Deal Type History:")
+        #if deal_data["deal_type_history"]:
+         #   for entry in deal_data["deal_type_history"]:
+          #      print(f"   - {entry['timestamp']}: {entry['value']}")     
+        #else:
+         #   print("   - No history found")
 
         grouped.setdefault(owner_email, []).append(deal_data)
 
