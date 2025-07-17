@@ -113,7 +113,7 @@ def get_all_deals_grouped_by_owner():
         #print(f"💰 Amount: ₹{deal_data['amount']}")
         #print(f"👥 Total Contacts: {len(contacts)} (API) / {deal_data['num_associated_contacts']} (Property)")
         #for contact in contacts:
-         #   print(f"   - {contact['firstname']} {contact['lastname']} | {contact['email']} | {contact['jobtitle']}")   '''
+         #   print(f"   - {contact['firstname']} {contact['lastname']} | {contact['email']} | {contact['jobtitle']}")   
 
         grouped.setdefault(owner_email, []).append(deal_data)
 
