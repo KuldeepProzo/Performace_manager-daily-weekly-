@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: performance-manager
+    runtime: python
+    region: oregon  # You can change to 'frankfurt' if you're closer to Europe/India
+    plan: starter  # starter = $7/month, supports 24x7 uptime
+    branch: main  # or whatever branch you're deploying
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: HUBSPOT_TOKEN
+        sync: false
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_ID
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
