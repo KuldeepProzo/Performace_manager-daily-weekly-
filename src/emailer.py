@@ -154,7 +154,7 @@ def send_email_with_attachment(to_email, body, file_path, role="OWNER"):
     msg = MIMEMultipart()
     msg["Subject"] = subject.strip()
     msg["From"] = formataddr(("Prozo Performance Manager", EMAIL_USERNAME.strip()))
-    msg["To"] = "divij.wadhwa@prozo.com "
+    msg["To"] = to_email.strip()
     msg.attach(MIMEText(body, "html"))
 
     try:
