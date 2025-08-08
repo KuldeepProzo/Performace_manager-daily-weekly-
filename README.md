@@ -79,7 +79,7 @@ app = Flask(__name__)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    subprocess.Popen(["/root/deploy.sh"])
+    subprocess.Popen(["/root/hubspot_performance_manager/Performace_manager-daily-weekly-/deploy.sh"])
     return "Webhook received", 200
 
 if __name__ == "__main__":
