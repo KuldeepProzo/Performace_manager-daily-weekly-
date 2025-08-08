@@ -52,7 +52,7 @@ python3 app.py
 ### Create `deploy.sh`
 
 ```bash
-sudo nano /root/deploy.sh
+sudo nano /root/hubspot_performance_manager/Performace_manager-daily-weekly-/deploy.sh
 ```
 
 Paste:
