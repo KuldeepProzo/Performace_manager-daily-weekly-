@@ -66,7 +66,7 @@ git pull origin main
 Make it executable:
 
 ```bash
-chmod +x /root/deploy.sh
+chmod +x /root/hubspot_performance_manager/Performace_manager-daily-weekly-/deploy.sh
 ```
 
 ### Create `webhook_listener.py`
