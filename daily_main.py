@@ -7,6 +7,12 @@ from src.analyze_deals import analyze_deals
 from src.emailer import send_email_with_csv
 import time
 
+# ✅ Only send to selected owners
+exclude_emails = {
+   "kuldeep.thakran@prozo.com",
+   "ankit.rakhecha@prozo.com"
+ }
+
 # Retry wrapper for email sending
 def safe_send_email(email, deals, role, metrics=None):
     try:
@@ -33,11 +39,12 @@ if __name__ == "__main__":
     print("📩 Fetching engagements...")
     all_deals = []
     for owner_email, deals in deals_by_owner.items():
-        for deal in deals:
-            timestamps, last_note = fetch_engagements_for_deal(deal["id"], deal["name"])
-            deal["engagements"] = timestamps
-            deal["last_note"] = last_note
-            all_deals.append(deal)
+        if owner_email not in exclude_emails:
+            for deal in deals:
+                timestamps, last_note = fetch_engagements_for_deal(deal["id"], deal["name"])
+                deal["engagements"] = timestamps
+                deal["last_note"] = last_note
+                all_deals.append(deal)
 
     print(f"🧠 Analyzing {len(all_deals)} deals...")
     alert_map, metrics_by_owner = analyze_deals(all_deals)
@@ -60,27 +67,15 @@ if __name__ == "__main__":
     for email, deals in alerts_by_owner.items():
         print(f"   - {email} ({len(deals)} deal(s))")
 
-    # ✅ Only send to selected owners
-    specific_owners = {
-        
-        "noyal.saharan@prozo.com",
-        "shaikh.quamar@prozo.com",
-        "nikhil.patle@prozo.com",
-        "vishal.labh1@prozo.com",
-        "kuldeep.thakran@prozo.com",
-        "sushma.chauhan@prozo.com",
-        "divij.wadhwa@prozo.com"
-
-    }
-
     print("\n📧 Sending Deal Owner emails to selected owners only...")
     for email, deals in alerts_by_owner.items():
-        if email in specific_owners:
+        if email not in exclude_emails:
             safe_send_email(email, deals, role="OWNER", metrics=metrics_by_owner.get(email.lower(), {}))
 
     # 📧 Always send summary to Kuldeep
     print("\n📧 Sending summary email to Kuldeep...")
     all_alerted_deals = [deal for deal in all_deals if deal.get("alerts")]
-    safe_send_email("kuldeep.thakran@prozo.com", all_alerted_deals, role="SUMMARY")
+    safe_send_email("kuldeep.thakran@prozo.com", all_alerted_deals, role="SUMMARY", metrics=metrics_by_owner)
+    safe_send_email("ashvini.jakhar@prozo.com", all_alerted_deals, role="SUMMARY", metrics=metrics_by_owner)
 
     print("✅ Process complete. Exiting.")

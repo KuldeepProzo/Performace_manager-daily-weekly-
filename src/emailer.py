@@ -12,6 +12,10 @@ from email.utils import formataddr
 # Load env
 EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+exclude_emails = {
+   "kuldeep.thakran@prozo.com",
+   "ankit.rakhecha@prozo.com"
+ }
 
 if not EMAIL_USERNAME or not EMAIL_PASSWORD:
     raise ValueError("EMAIL_USERNAME or EMAIL_PASSWORD not set in environment variables")
@@ -51,33 +55,57 @@ def extract_name_from_email(email):
 def build_email_body(role="OWNER", recipient=None, metrics=None):
     name = extract_name_from_email(recipient)
     today_str = datetime.today().strftime("%d %b %Y")
+    metrics = metrics or {}
 
     if role == "SUMMARY":
         return f"""
-Hi {name} 👋,
+<p>Hi {name} 👋,</p>
 
-Please find attached the consolidated MQL performance summary for all deal owners.
+<p>Please find attached the consolidated MQL performance summary for all deal owners.</p>
 
-📋 The report includes:
-• Deals that triggered alerts
-• Grouped by owner and deal type
-• Key issues like inactivity or stage changes
+<p>🚨 Action Summary:</p>
 
-This summary will help in identifying patterns across the pipeline
-and ensure timely interventions by team leaders.
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">
+<tr><th>Metric</th><th>Count</th><th>Status</th></tr>
+<tr><td>🕒 First Engagement Pending (1+ Days)</td><td>{sum(stats.get("first_engagement_pending", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td style='color: red;'>⚠️ Follow-up Needed</td></tr>
+<tr><td>⏱️ 1st → 2nd Engagement Delay</td><td>{sum(stats.get("engagement_gap_1_2", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td style='color: orange;'>⚠️ Delay</td></tr>
+<tr><td>⏱️ 2nd → 3rd Engagement Delay</td><td>{sum(stats.get("engagement_gap_2_3", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td style='color: orange;'>⚠️ Delay</td></tr>
+<tr><td>🚫 No Activity in Last 3 Days</td><td>{sum(stats.get("no_activity_3_days", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td style='color: red;'>🔴 Inactive</td></tr>
+<tr><td>💡 Revived Cold/Warm Deals</td><td>{sum(stats.get("revived_cold_warm", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td style='color: green;'>🟢 Active Again</td></tr>
+<tr><td>♻️ Stage Reversal: Hot → Warm</td><td>{sum(stats.get("hot_to_warm", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td>OK</td></tr>
+<tr><td>♻️ Stage Reversal: Warm → Cold</td><td>{sum(stats.get("warm_to_cold", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td>OK</td></tr>
+<tr><td>♻️ Stage Reversal: Hot → Cold</td><td>{sum(stats.get("hot_to_cold", 0)
+    for owner_email, stats in metrics.items()
+    if owner_email not in exclude_emails)}</td><td>OK</td></tr>
+</table>
 
-Warm regards,
-Prozo Performance Manager
+<p>This summary will help in identifying patterns across the pipeline
+and ensure timely interventions by team leaders.</p>
+
+<p>Warm regards,<br>
+Prozo Performance Manager</p>
 """
 
-    metrics = metrics or {}
-
     return f"""
-Hi {name} 👋,
+<p>Hi {name} 👋,</p>
 
-Here’s your daily performance snapshot on Hot Deals from HubSpot as of {today_str}.
+<p>Here’s your daily performance snapshot on Hot Deals from HubSpot as of {today_str}.</p>
 
-🚨 Action Summary:
+<p>🚨 Action Summary:</p>
 
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">
 <tr><th>Metric</th><th>Count</th><th>Status</th></tr>
@@ -91,12 +119,11 @@ Here’s your daily performance snapshot on Hot Deals from HubSpot as of {today_
 <tr><td>♻️ Stage Reversal: Hot → Cold</td><td>{metrics.get('hot_to_cold', 0)}</td><td>OK</td></tr>
 </table>
 
-📎 Please refer to the attached file for detailed deal-level insights.
+<p>📎 Please refer to the attached file for detailed deal-level insights.<br>
+🔖<strong>Reminder:</strong> Any stage reversal must be accompanied by a task. Otherwise, please move such deals to <strong>LOST</strong>.</p>
 
-🔖 <strong>Reminder:</strong> Any stage reversal must be accompanied by a task. Otherwise, please move such deals to <strong>LOST</strong>.
-
-Warm regards,
-Prozo Performance Manager
+<p>Warm regards,<br>
+Prozo Performance Manager</p>
 """
 
 def generate_csv(deals, recipient, role):
