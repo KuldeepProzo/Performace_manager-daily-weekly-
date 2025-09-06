@@ -73,9 +73,11 @@ if __name__ == "__main__":
             safe_send_email(email, deals, role="OWNER", metrics=metrics_by_owner.get(email.lower(), {}))
 
     # 📧 Always send summary to Kuldeep
-    print("\n📧 Sending summary email to Kuldeep...")
+    print("\n📧 Sending summary email.....")
     all_alerted_deals = [deal for deal in all_deals if deal.get("alerts")]
     safe_send_email("kuldeep.thakran@prozo.com", all_alerted_deals, role="SUMMARY", metrics=metrics_by_owner)
     safe_send_email("ashvini.jakhar@prozo.com", all_alerted_deals, role="SUMMARY", metrics=metrics_by_owner)
+    safe_send_email("rishi.singh@prozo.com", all_alerted_deals, role="SUMMARY", metrics=metrics_by_owner)
+    safe_send_email("gourav.rathi@prozo.com", all_alerted_deals, role="SUMMARY", metrics=metrics_by_owner)
 
     print("✅ Process complete. Exiting.")

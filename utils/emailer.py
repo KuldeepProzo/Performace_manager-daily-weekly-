@@ -14,7 +14,7 @@ load_dotenv()
 # 🔐 Load and sanitize secrets
 EMAIL_USERNAME = os.getenv("EMAIL_USERNAME", "").strip().replace("\n", "").replace("\r", "")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "").strip().replace("\n", "").replace("\r", "")
-SUMMARY_RECEIVER = ["kuldeep.thakran@prozo.com","ashvini.jakhar@prozo.com"]
+SUMMARY_RECEIVER = ["kuldeep.thakran@prozo.com","ashvini.jakhar@prozo.com","rishi.singh@prozo.com","gourav.rathi@prozo.com"]
 exclude_emails = {
     "kuldeep.thakran@prozo.com",
     "ankit.rakhecha@prozo.com",
@@ -178,6 +178,13 @@ def export_and_email(alerts, counters, grouped_deals):
         combined_alerts[SUMMARY_RECEIVER[1]].extend(alert_list)
         combined_deals[SUMMARY_RECEIVER[0]].extend(grouped_deals.get(owner_email, []))
         combined_deals[SUMMARY_RECEIVER[1]].extend(grouped_deals.get(owner_email, []))
+    
+    combined_deals[SUMMARY_RECEIVER[2]] = combined_deals[SUMMARY_RECEIVER[0]].copy()
+    combined_alerts[SUMMARY_RECEIVER[2]] = combined_alerts[SUMMARY_RECEIVER[0]].copy()
+    combined_deals[SUMMARY_RECEIVER[3]] = combined_deals[SUMMARY_RECEIVER[0]].copy()
+    combined_alerts[SUMMARY_RECEIVER[3]] = combined_alerts[SUMMARY_RECEIVER[0]].copy()
 
     safe_send_email(SUMMARY_RECEIVER[0], combined_alerts, combined_deals, role="SUMMARY", counters=counters)
     safe_send_email(SUMMARY_RECEIVER[1], combined_alerts, combined_deals, role="SUMMARY", counters=counters)
+    safe_send_email(SUMMARY_RECEIVER[2], combined_alerts, combined_deals, role="SUMMARY", counters=counters)
+    safe_send_email(SUMMARY_RECEIVER[3], combined_alerts, combined_deals, role="SUMMARY", counters=counters)
