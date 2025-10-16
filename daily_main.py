@@ -10,7 +10,9 @@ import time
 # ✅ Only send to selected owners
 exclude_emails = {
    "kuldeep.thakran@prozo.com",
-   "ankit.rakhecha@prozo.com"
+   "ankit.rakhecha@prozo.com",
+   "gourav.rathi@prozo.com",
+   "ashvini.jakhar@prozo.com"
  }
 
 # Retry wrapper for email sending

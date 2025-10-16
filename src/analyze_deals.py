@@ -6,6 +6,7 @@ def analyze_deals(deal_list):
 
     for deal in deal_list:
         deal_id = deal.get("id")
+        deal_name = deal.get("name", "N/A")
         owner_email = deal.get("owner_email", "").lower()
         raw_type = deal.get("deal_type", "").lower()
 
@@ -26,14 +27,14 @@ def analyze_deals(deal_list):
 
         alerts = []
         metrics = metrics_by_owner.setdefault(owner_email, {
-            "first_engagement_pending": 0,
-            "engagement_gap_1_2": 0,
-            "engagement_gap_2_3": 0,
-            "no_activity_3_days": 0,
-            "revived_cold_warm": 0,
-            "hot_to_warm": 0,
-            "warm_to_cold": 0,
-            "hot_to_cold": 0
+            "first_engagement_pending": [0,[]],
+            "engagement_gap_1_2": [0,[]],
+            "engagement_gap_2_3": [0,[]],
+            "no_activity_3_days": [0,[]],
+            "revived_cold_warm": [0,[]],
+            "hot_to_warm": [0,[]],
+            "warm_to_cold": [0,[]],
+            "hot_to_cold": [0,[]],
         })
                 
         
@@ -100,7 +101,8 @@ def analyze_deals(deal_list):
                 assigned = datetime.strptime(owner_assigned_str[:19], "%Y-%m-%dT%H:%M:%S")
                 if not engagements and datetime.utcnow() - assigned > timedelta(days=1):
                     alerts.append("First engagement pending (1+ days)")
-                    metrics["first_engagement_pending"] += 1
+                    metrics["first_engagement_pending"][0] += 1
+                    metrics["first_engagement_pending"][1].append(deal_name)
             except Exception as e:
                 print(f"❌ Error parsing owner assignment date: {e}")
 
@@ -113,7 +115,8 @@ def analyze_deals(deal_list):
                     gap1 = (t2 - t1).total_seconds() / 86400
                     if gap1 > 2:
                          alerts.append("Delay between 1st & 2nd engagement")
-                         metrics["engagement_gap_1_2"] += 1
+                         metrics["engagement_gap_1_2"][0] += 1
+                         metrics["engagement_gap_1_2"][1].append(deal_name)
 
                 if len(engagement_ts) >= 3:
                     t3 = engagement_ts[2]
@@ -121,7 +124,8 @@ def analyze_deals(deal_list):
                     gap2 = (t3 - t2).total_seconds() / 86400  # t2 is still valid here
                     if gap2 > 2:
                        alerts.append("Delay between 2nd & 3rd engagement")
-                       metrics["engagement_gap_2_3"] += 1
+                       metrics["engagement_gap_2_3"][0] += 1
+                       metrics["engagement_gap_2_3"][1].append(deal_name)
             except Exception as e:
                 print(f"❌ Error computing engagement gaps for deal {deal.get('id', 'unknown')}: {e}")
 
@@ -131,7 +135,8 @@ def analyze_deals(deal_list):
                 last_dt = datetime.strptime(last_activity_str[:10], "%Y-%m-%d")
                 if datetime.utcnow() - last_dt > timedelta(days=3):
                     alerts.append("No Activity in Last 3 Days")
-                    metrics["no_activity_3_days"] += 1
+                    metrics["no_activity_3_days"][0] += 1
+                    metrics["no_activity_3_days"][1].append(deal_name)
             except Exception as e:
                 print(f"❌ Error parsing last activity date: {e}")
 
@@ -141,7 +146,8 @@ def analyze_deals(deal_list):
                 last_dt = datetime.strptime(last_activity_str[:10], "%Y-%m-%d")
                 if datetime.utcnow() - last_dt <= timedelta(days=1):
                     alerts.append("Revived Cold/Warm Deal")
-                    metrics["revived_cold_warm"] += 1
+                    metrics["revived_cold_warm"][0] += 1
+                    metrics["revived_cold_warm"][1].append(deal_name)
             except Exception as e:
                 print(f"❌ Error parsing revival activity: {e}")
 
@@ -174,11 +180,14 @@ def analyze_deals(deal_list):
                             deal["stage_change"] = change
 
                             if from_val == "hot" and to_val == "warm":
-                                metrics["hot_to_warm"] += 1
+                                metrics["hot_to_warm"][0] += 1
+                                metrics["hot_to_warm"][1].append(deal_name)
                             elif from_val == "warm" and to_val == "cold":
-                                metrics["warm_to_cold"] += 1
+                                metrics["warm_to_cold"][0] += 1
+                                metrics["warm_to_cold"][1].append(deal_name)
                             elif from_val == "hot" and to_val == "cold":
-                                metrics["hot_to_cold"] += 1
+                                metrics["hot_to_cold"][0] += 1
+                                metrics["hot_to_cold"][1].append(deal_name)
 
                             print(f"✅ Detected stage change for deal {deal_id}: {change}")
                         else:

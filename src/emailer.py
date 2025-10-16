@@ -67,28 +67,28 @@ def build_email_body(role="OWNER", recipient=None, metrics=None):
 
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">
 <tr><th>Metric</th><th>Count</th><th>Status</th></tr>
-<tr><td>🕒 First Engagement Pending (1+ Days)</td><td>{sum(stats.get("first_engagement_pending", 0)
+<tr><td>🕒 First Engagement Pending (1+ Days)</td><td>{sum(stats.get("first_engagement_pending", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td style='color: red;'>⚠️ Follow-up Needed</td></tr>
-<tr><td>⏱️ 1st → 2nd Engagement Delay</td><td>{sum(stats.get("engagement_gap_1_2", 0)
+<tr><td>⏱️ 1st → 2nd Engagement Delay</td><td>{sum(stats.get("engagement_gap_1_2", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td style='color: orange;'>⚠️ Delay</td></tr>
-<tr><td>⏱️ 2nd → 3rd Engagement Delay</td><td>{sum(stats.get("engagement_gap_2_3", 0)
+<tr><td>⏱️ 2nd → 3rd Engagement Delay</td><td>{sum(stats.get("engagement_gap_2_3", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td style='color: orange;'>⚠️ Delay</td></tr>
-<tr><td>🚫 No Activity in Last 3 Days</td><td>{sum(stats.get("no_activity_3_days", 0)
+<tr><td>🚫 No Activity in Last 3 Days</td><td>{sum(stats.get("no_activity_3_days", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td style='color: red;'>🔴 Inactive</td></tr>
-<tr><td>💡 Revived Cold/Warm Deals</td><td>{sum(stats.get("revived_cold_warm", 0)
+<tr><td>💡 Revived Cold/Warm Deals</td><td>{sum(stats.get("revived_cold_warm", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td style='color: green;'>🟢 Active Again</td></tr>
-<tr><td>♻️ Stage Reversal: Hot → Warm</td><td>{sum(stats.get("hot_to_warm", 0)
+<tr><td>♻️ Stage Reversal: Hot → Warm</td><td>{sum(stats.get("hot_to_warm", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td>OK</td></tr>
-<tr><td>♻️ Stage Reversal: Warm → Cold</td><td>{sum(stats.get("warm_to_cold", 0)
+<tr><td>♻️ Stage Reversal: Warm → Cold</td><td>{sum(stats.get("warm_to_cold", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td>OK</td></tr>
-<tr><td>♻️ Stage Reversal: Hot → Cold</td><td>{sum(stats.get("hot_to_cold", 0)
+<tr><td>♻️ Stage Reversal: Hot → Cold</td><td>{sum(stats.get("hot_to_cold", [0, []])[0]
     for owner_email, stats in metrics.items()
     if owner_email not in exclude_emails)}</td><td>OK</td></tr>
 </table>
@@ -107,16 +107,71 @@ Prozo Performance Manager</p>
 
 <p>🚨 Action Summary:</p>
 
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px;">
-<tr><th>Metric</th><th>Count</th><th>Status</th></tr>
-<tr><td>🕒 First Engagement Pending (1+ Days)</td><td>{metrics.get('first_engagement_pending', 0)}</td><td style='color: red;'>⚠️ Follow-up Needed</td></tr>
-<tr><td>⏱️ 1st → 2nd Engagement Delay</td><td>{metrics.get('engagement_gap_1_2', 0)}</td><td style='color: orange;'>⚠️ Delay</td></tr>
-<tr><td>⏱️ 2nd → 3rd Engagement Delay</td><td>{metrics.get('engagement_gap_2_3', 0)}</td><td style='color: orange;'>⚠️ Delay</td></tr>
-<tr><td>🚫 No Activity in Last 3 Days</td><td>{metrics.get('no_activity_3_days', 0)}</td><td style='color: red;'>🔴 Inactive</td></tr>
-<tr><td>💡 Revived Cold/Warm Deals</td><td>{metrics.get('revived_cold_warm', 0)}</td><td style='color: green;'>🟢 Active Again</td></tr>
-<tr><td>♻️ Stage Reversal: Hot → Warm</td><td>{metrics.get('hot_to_warm', 0)}</td><td>OK</td></tr>
-<tr><td>♻️ Stage Reversal: Warm → Cold</td><td>{metrics.get('warm_to_cold', 0)}</td><td>OK</td></tr>
-<tr><td>♻️ Stage Reversal: Hot → Cold</td><td>{metrics.get('hot_to_cold', 0)}</td><td>OK</td></tr>
+<table border="1" cellpadding="5" cellspacing="0" 
+       style="border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px; width: 100%;">
+<tr>
+    <th>Metric</th>
+    <th>Count</th>
+    <th>Deal Names</th>
+    <th>Status</th>
+</tr>
+
+<tr>
+    <td>🕒 First Engagement Pending (1+ Days)</td>
+    <td>{metrics.get('first_engagement_pending', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('first_engagement_pending', [0, []])[1])}</td>
+    <td style='color: red;'>⚠️ Follow-up Needed</td>
+</tr>
+
+<tr>
+    <td>⏱️ 1st → 2nd Engagement Delay</td>
+    <td>{metrics.get('engagement_gap_1_2', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('engagement_gap_1_2', [0, []])[1])}</td>
+    <td style='color: orange;'>⚠️ Delay</td>
+</tr>
+
+<tr>
+    <td>⏱️ 2nd → 3rd Engagement Delay</td>
+    <td>{metrics.get('engagement_gap_2_3', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('engagement_gap_2_3', [0, []])[1])}</td>
+    <td style='color: orange;'>⚠️ Delay</td>
+</tr>
+
+<tr>
+    <td>🚫 No Activity in Last 3 Days</td>
+    <td>{metrics.get('no_activity_3_days', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('no_activity_3_days', [0, []])[1])}</td>
+    <td style='color: red;'>🔴 Inactive</td>
+</tr>
+
+<tr>
+    <td>💡 Revived Cold/Warm Deals</td>
+    <td>{metrics.get('revived_cold_warm', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('revived_cold_warm', [0, []])[1])}</td>
+    <td style='color: green;'>🟢 Active Again</td>
+</tr>
+
+<tr>
+    <td>♻️ Stage Reversal: Hot → Warm</td>
+    <td>{metrics.get('hot_to_warm', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('hot_to_warm', [0, []])[1])}</td>
+    <td>OK</td>
+</tr>
+
+<tr>
+    <td>♻️ Stage Reversal: Warm → Cold</td>
+    <td>{metrics.get('warm_to_cold', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('warm_to_cold', [0, []])[1])}</td>
+    <td>OK</td>
+</tr>
+
+<tr>
+    <td>♻️ Stage Reversal: Hot → Cold</td>
+    <td>{metrics.get('hot_to_cold', [0, []])[0]}</td>
+    <td>{", ".join(metrics.get('hot_to_cold', [0, []])[1])}</td>
+    <td>OK</td>
+</tr>
+
 </table>
 
 <p>📎 Please refer to the attached file for detailed deal-level insights.<br>
